@@ -13,10 +13,10 @@ while True:
         cur = conn.cursor()
         break
     except sqltor.errors.ProgrammingError:
-        print("Access denied check your credentials again!!")
+        print("Access denied check your credentials again like user and password !!")
         continue
     except sqltor.errors.DatabaseError:
-        print("Check your credentials specially host :) ")
+        print("Check your credentials especially host :) ")
     
 
 def main():
@@ -30,8 +30,11 @@ def menu():
     while True:
         try:
             choice = int(input("Enter your choice here! : "))
-            break
+            if choice in (1,2):
+                break
+            else:
+                print("Enter a integer within the range")
         except ValueError:
-            print("Enter an integer")
+            print("Enter an integer, here try again")
 
 if __name__ == "__main__": main()
