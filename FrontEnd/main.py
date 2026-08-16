@@ -1,5 +1,6 @@
 # Required imports
 import mysql.connector as sqltor
+import os
 
 # connection in __main__ cuz it requires the variables to be in global so no func is used
 while True:
@@ -12,7 +13,7 @@ while True:
         HOST = input("Enter Host: ")
         USER = input("Enter User: ")
         PASSWORD = input("Enter Password: ")
-        conn = sqltor.connect(host = HOST, user = USER, passwd = PASSWORD)
+        conn = sqltor.connect(host = HOST, user = USER, passwd = PASSWORD, autocommit = True)
         cur = conn.cursor()
         break
 
@@ -51,8 +52,11 @@ def menu():
 # Log them in according to their roles
 def init(mn_ch):
     if mn_ch == 1:
-        db_cred_query = """CREATE DATABASE IF NOT EXISTS ctf;"""
-        cur.execute(db_cred_query)
+        try:
+            with open("../BackEnd/init_queries.sql", "r") as init_query:
+                print(init_query.read())
+        except FileNotFoundError:
+            print("File is missing please restore it via github repo CTF_Administration.")
 
     if mn_ch == 2:
         ...
