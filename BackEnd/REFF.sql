@@ -1,3 +1,6 @@
+DROP DATABASE IF EXISTS ctf;
+CREATE DATABASE IF NOT EXISTS ctf;
+USE ctf;
 CREATE TABLE `teams`(
     `team_id_pk` INT NOT NULL,
     `team_name` VARCHAR(255) NULL,

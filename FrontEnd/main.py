@@ -20,11 +20,9 @@ while True:
     except sqltor.errors.ProgrammingError:
         print("Access denied check your credentials again like user and password !!")
         
-
     except sqltor.errors.DatabaseError:
         print("Check your credentials especially host :) ")
-        
-    
+         
 # Main function to understand the flow
 def main():
     mn_ch = menu()
@@ -33,11 +31,15 @@ def main():
 # Menu function that return the val
 def menu():
     print(f"========== Welcome {USER} ==========")
+
     print("Choose an Option :) ")
+
     menu_choices = """1. Initialize for the first time\n2. Admin login \n3. Team login"""
+
     print(menu_choices)
 
     while True:
+
         try:
             choice = int(input("Enter your choice here! : "))
 
@@ -49,12 +51,21 @@ def menu():
         except ValueError:
             print("Enter an integer, here try again")
 
-# Log them in according to their roles
+# Log them in according to their roles and init the schema
 def init(mn_ch):
+
+    # To initialize required db, tables, and relations within it
     if mn_ch == 1:
+
+        # Used try-except to make sure the file is present helps to reduce the occurence of exceptions
         try:
-            with open("../BackEnd/init_queries.sql", "r") as init_query:
-                print(init_query.read())
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(script_dir, "..", "BackEnd", "REFF.sql")
+            with open(file_path, "r") as init_query:
+                exe_queries = init_query.read()
+                cur.execute(exe_queries)
+                print("Done!")
+
         except FileNotFoundError:
             print("File is missing please restore it via github repo CTF_Administration.")
 
@@ -64,4 +75,5 @@ def init(mn_ch):
     if mn_ch == 3:
         ...
 
+# This ensures that the program can run only when it is directly run and not imported
 if __name__ == "__main__": main()
