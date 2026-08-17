@@ -1,6 +1,7 @@
 DROP DATABASE IF EXISTS ctf;
 CREATE DATABASE IF NOT EXISTS ctf;
 USE ctf;
+
 CREATE TABLE admins(
     admin_id_pk INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(75) NOT NULL,
@@ -29,3 +30,15 @@ CREATE TABLE teams(
     team_id_pk INT PRIMARY KEY,
     team_name VARCHAR(75)
 );
+CREATE TABLE team_members(
+    team_id_cpfk INT,
+    player_id_cpfk INT,
+    PRIMARY KEY(team_id_cpfk,player_id_cpfk),
+    FOREIGN KEY(team_id_cpfk) REFERENCES teams(team_id_pk),
+    FOREIGN KEY(player_id_cpfk) REFERENCES players(player_id_pk)
+);
+CREATE TABLE scores(
+    team_id_pfk INT PRIMARY KEY,
+    total_points INT,
+    challenges_solved INT
+)
