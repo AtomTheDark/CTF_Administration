@@ -7,7 +7,7 @@ while True:
 
     try:
         print("========== Welcome to CTF Administrator ==========")
-        cont = input("Press Enter to Continue and something to exit ^_^ .")
+        cont = input("Press Enter to Continue or something to exit ^_^ .")
         if cont:
             exit()
         HOST = input("Enter Host: ")
@@ -60,7 +60,7 @@ def init(mn_ch):
         # Used try-except to make sure the file is present helps to reduce the occurence of exceptions
         try:
             script_dir = os.path.dirname(os.path.abspath(__file__))
-            file_path = os.path.join(script_dir, "..", "BackEnd", "REFF.sql")
+            file_path = os.path.join(script_dir, "..", "BackEnd", "init_queries.sql")
             with open(file_path, "r") as init_query:
                 exe_queries = init_query.read()
                 cur.execute(exe_queries)
