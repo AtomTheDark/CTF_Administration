@@ -38,7 +38,12 @@ CREATE TABLE team_members(
     FOREIGN KEY(player_id_cpfk) REFERENCES players(player_id_pk)
 );
 CREATE TABLE scores(
-    team_id_pfk INT PRIMARY KEY,
+    team_id_pfk INT AUTO_INCREMENT PRIMARY KEY,
     total_points INT,
-    challenges_solved INT
-)
+    challenges_solved INT,
+    FOREIGN KEY(team_id_pfk) REFERENCES teams(team_id_pk)
+);
+CREATE TABLE categories(
+    cat_id_pk INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(75)
+);
