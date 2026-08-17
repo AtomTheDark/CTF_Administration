@@ -19,3 +19,13 @@ CREATE TABLE competitions(
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(admin_id_fk) REFERENCES admins(admin_id_pk)
 );
+CREATE TABLE players(
+    player_id_pk INT PRIMARY KEY,
+    player_name VARCHAR(50) NOT NULL,
+    player_username VARCHAR(200) NOT NULL,
+    player_passwd_hash VARCHAR(255)
+);
+CREATE TABLE teams(
+    team_id_pk INT PRIMARY KEY,
+    team_name VARCHAR(75)
+);
