@@ -47,3 +47,34 @@ CREATE TABLE categories(
     cat_id_pk INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(75)
 );
+CREATE TABLE challenges(
+    challenge_id_pk INT AUTO_INCREMENT PRIMARY KEY,
+    competition_id_fk INT NOT NULL,
+    title VARCHAR(50),
+    challenge_description VARCHAR(255),
+    cat_id_fk INT NOT NULL,
+    difficulty VARCHAR(25),
+    points INT NOT NULL,
+    hashed_flag VARCHAR(255),
+    admin_id_fk INT NOT NULL,
+    created_at DATETIME,
+    FOREIGN KEY(competition_id_fk) REFERENCES competitions(competition_id_pk),
+    FOREIGN KEY(cat_id_fk) REFERENCES categories(cat_id_pk),
+    FOREIGN KEY(admin_id_fk) REFERENCES admins(admin_id_pk)
+);
+CREATE TABLE hints(
+    hint_id INT AUTO_INCREMENT PRIMARY KEY,
+    challenge_id_fk INT NOT NULL,
+    hint_text TEXT NOT NULL,
+    cost INT NOT NULL,
+    FOREIGN KEY(challenge_id_fk) REFERENCES challenges(cat_id_fk)
+);
+CREATE TABLE submissions(
+    submission_id INT AUTO_INCREMENT PRIMARY KEY,
+    team_id_fk INT,
+    challenge_id_fk INT,
+    submitted_flag VARCHAR(255),
+    submitted_flag_hash VARCHAR(255),
+    is_correct BOOLEAN NOT NULL,
+    submited_at DATETIME NOT NULL
+);
