@@ -45,7 +45,7 @@ CREATE TABLE scores(
 );
 CREATE TABLE categories(
     cat_id_pk INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(75)
+    cat_name VARCHAR(75)
 );
 CREATE TABLE challenges(
     challenge_id_pk INT AUTO_INCREMENT PRIMARY KEY,
@@ -76,5 +76,7 @@ CREATE TABLE submissions(
     submitted_flag VARCHAR(255),
     submitted_flag_hash VARCHAR(255),
     is_correct BOOLEAN NOT NULL,
-    submited_at DATETIME NOT NULL
+    submited_at DATETIME NOT NULL,
+    FOREIGN KEY(team_id_fk) REFERENCES teams(team_id_pk),
+    FOREIGN KEY(challenge_id_fk) REFERENCES challenges(challenge_id_pk)
 );
