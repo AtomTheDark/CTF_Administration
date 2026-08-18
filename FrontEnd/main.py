@@ -2,6 +2,7 @@
 import mysql.connector as sqltor
 import os
 import pickle
+import hashlib
 
 # Global Variables
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -104,7 +105,14 @@ def init(mn_ch):
             print("File is missing please restore it via github repo CTF_Administration.")
 
     if mn_ch == 2:
-        ...
+        usr = input("Enter your username: ")
+        psd = input("Enter your password: "); hashed_psd = hashlib.sha256(psd.encode()).hexdigest()
+        cur.execute("USE ctf;")
+        cur.execute(f"SELECT * FROM admins WHERE username = '{usr}' AND admin_password_hash = '{hashed_psd}'")
+        place_holder_for_bool = cur.fetchall()
+        if place_holder_for_bool:
+            print("You are now logged in ^_^")
+            exit()
 
     if mn_ch == 3:
         ...
