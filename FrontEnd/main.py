@@ -34,7 +34,7 @@ def menu():
 
     print("Choose an Option :) ")
 
-    menu_choices = """1. Initialize for the first time\n2. Admin login \n3. Team login"""
+    menu_choices = """1. Initialize for the first time\n2. Admin login \n3. Team login\n4. To Exit"""
 
     print(menu_choices)
 
@@ -74,6 +74,9 @@ def init(mn_ch):
 
     if mn_ch == 3:
         ...
+
+    if mn_ch == 4:
+        exit()
 
 # This ensures that the program can run only when it is directly run and not imported
 if __name__ == "__main__": main()

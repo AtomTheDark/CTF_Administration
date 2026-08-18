@@ -7,7 +7,7 @@ CREATE TABLE admins(
     username VARCHAR(75) NOT NULL,
     email VARCHAR(75) NOT NULL,
     admin_password_hash VARCHAR(255) NOT NULL,
-    created_at DATETIME NOT NULL
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE competitions(
     competition_id_pk int PRIMARY KEY,
@@ -80,3 +80,5 @@ CREATE TABLE submissions(
     FOREIGN KEY(team_id_fk) REFERENCES teams(team_id_pk),
     FOREIGN KEY(challenge_id_fk) REFERENCES challenges(challenge_id_pk)
 );
+INSERT INTO admins(username,email,admin_password_hash)
+VALUES ("admin","admin@ctf.com","8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918");
