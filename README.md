@@ -15,3 +15,9 @@ mysqldump -u root -p ctf > ctf.sql
 ```cmd
 mysql -u root -p ctf_new < ctf.sql
 ```
+
+#### Credentials
+
+- The first credential for your admin log in is
+- User = 'admin'
+- Password = 'admin'

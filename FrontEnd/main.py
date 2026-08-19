@@ -17,7 +17,7 @@ def credentials_returner():
 # connection in __main__ cuz it requires the variables to be in global so no func is used
 while True:
 
-    try:
+    try: # To connect to the database
         print("========== Welcome to CTF Administrator ==========")
         cont = input("Press Enter to Continue or something to exit ^_^ .")
         if cont:
@@ -52,10 +52,10 @@ while True:
         cur = conn.cursor()
         break
 
-    except sqltor.errors.ProgrammingError:
+    except sqltor.errors.ProgrammingError: # For incorrect user or incorrect password
         print("Access denied check your credentials again like user and password !!")
         
-    except sqltor.errors.DatabaseError:
+    except sqltor.errors.DatabaseError: # For every error that raises during any execution here used as a catcher to catch host error since that is the only exception here
         print("Check your credentials especially host :) ")
          
 # Main function to understand the flow
@@ -102,9 +102,9 @@ def init(mn_ch):
                 print("Done!")
 
         except FileNotFoundError:
-            print("File is missing please restore it via github repo CTF_Administration.")
+            print("File is missing please restore it via github repo: github.com/AtomTheDark/CTF_Administration")
 
-    if mn_ch == 2:
+    elif mn_ch == 2:
         usr = input("Enter your username: ")
         psd = input("Enter your password: "); hashed_psd = hashlib.sha256(psd.encode()).hexdigest()
         cur.execute("USE ctf;")
@@ -114,10 +114,10 @@ def init(mn_ch):
             print("You are now logged in ^_^")
             exit()
 
-    if mn_ch == 3:
+    elif mn_ch == 3:
         ...
 
-    if mn_ch == 4: # To exit
+    elif mn_ch == 4: # To exit
         exit()
 
 # This ensures that the program can run only when it is directly run and not imported
