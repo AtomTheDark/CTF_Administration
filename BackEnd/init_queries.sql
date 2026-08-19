@@ -10,7 +10,7 @@ CREATE TABLE admins(
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE competitions(
-    competition_id_pk int PRIMARY KEY,
+    competition_id_pk INT AUTO_INCREMENT PRIMARY KEY,
     competition_name VARCHAR(75) NOT NULL,
     competition_description VARCHAR(255),
     admin_id_fk INT NOT NULL,
@@ -21,13 +21,13 @@ CREATE TABLE competitions(
     FOREIGN KEY(admin_id_fk) REFERENCES admins(admin_id_pk)
 );
 CREATE TABLE players(
-    player_id_pk INT PRIMARY KEY,
+    player_id_pk INT AUTO_INCREMENT PRIMARY KEY,
     player_name VARCHAR(50) NOT NULL,
     player_username VARCHAR(200) NOT NULL,
     player_passwd_hash VARCHAR(255)
 );
 CREATE TABLE teams(
-    team_id_pk INT PRIMARY KEY,
+    team_id_pk INT AUTO_INCREMENT PRIMARY KEY,
     team_name VARCHAR(75)
 );
 CREATE TABLE team_members(
@@ -57,7 +57,7 @@ CREATE TABLE challenges(
     points INT NOT NULL,
     hashed_flag VARCHAR(255),
     admin_id_fk INT NOT NULL,
-    created_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(competition_id_fk) REFERENCES competitions(competition_id_pk),
     FOREIGN KEY(cat_id_fk) REFERENCES categories(cat_id_pk),
     FOREIGN KEY(admin_id_fk) REFERENCES admins(admin_id_pk)
@@ -67,7 +67,7 @@ CREATE TABLE hints(
     challenge_id_fk INT NOT NULL,
     hint_text TEXT NOT NULL,
     cost INT NOT NULL,
-    FOREIGN KEY(challenge_id_fk) REFERENCES challenges(cat_id_fk)
+    FOREIGN KEY(challenge_id_fk) REFERENCES challenges(challenge_id_pk)
 );
 CREATE TABLE submissions(
     submission_id INT AUTO_INCREMENT PRIMARY KEY,
