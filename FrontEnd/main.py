@@ -99,6 +99,10 @@ def init(mn_ch):
             with open(file_path, "r") as init_query:
                 exe_queries = init_query.read()
                 cur.execute(exe_queries)
+
+                # To remove the redundant empty lists returned by excecuting the ddl commands otherwise it will raise mysql.connector.errors.DatabaseError
+                while cur.nextset():
+                    cur.fetchall()
                 print("Done!")
 
         except FileNotFoundError:
