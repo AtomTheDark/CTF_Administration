@@ -109,20 +109,25 @@ def init(mn_ch):
             print("File is missing please restore it via github repo: github.com/AtomTheDark/CTF_Administration")
 
     elif mn_ch == 2:
-        usr = input("Enter your username: ")
-        psd = input("Enter your password: "); hashed_psd = hashlib.sha256(psd.encode()).hexdigest()
-        cur.execute("USE ctf;")
-        cur.execute(f"SELECT * FROM admins WHERE username = '{usr}' AND admin_password_hash = '{hashed_psd}'")
-        place_holder_for_bool = cur.fetchall()
-        if place_holder_for_bool:
-            print("You are now logged in ^_^")
-            exit()
+        while True:
+            usr = input("Enter your username: ")
+            psd = input("Enter your password: "); hashed_psd = hashlib.sha256(psd.encode()).hexdigest()
+            cur.execute("USE ctf;")
+            cur.execute(f"SELECT * FROM admins WHERE username = '{usr}' AND admin_password_hash = '{hashed_psd}'")
+            place_holder_for_bool = cur.fetchall()
+            if place_holder_for_bool:
+                admin_init()
+            else:
+                print(f"Invalid Username or Password\nEntered Username is {usr}, and Password is {psd}")
 
     elif mn_ch == 3:
         ...
 
     elif mn_ch == 4: # To exit
         exit()
+
+def admin_init():
+    print("You are now logged in ^_^")
 
 # This ensures that the program can run only when it is directly run and not imported
 if __name__ == "__main__": main()
