@@ -64,6 +64,7 @@ def main():
         mn_ch = menu()
         init(mn_ch)
 
+
 # Menu function that return the val
 def menu():
     print(f"========== Welcome {USER} ==========")
@@ -108,7 +109,7 @@ def init(mn_ch):
         except FileNotFoundError:
             print("File is missing please restore it via github repo: github.com/AtomTheDark/CTF_Administration")
 
-    elif mn_ch == 2:
+    elif mn_ch == 2: # To log in as admin and add other admins and challenges
         while True:
             usr = input("Enter your username: ")
             psd = input("Enter your password: "); hashed_psd = hashlib.sha256(psd.encode()).hexdigest()
@@ -128,6 +129,35 @@ def init(mn_ch):
 
 def admin_init():
     print("You are now logged in ^_^")
+    print("1. To alter admin credentials and add new admins\n2. To exit")
+    while True:
+        try:
+            admin_ch = int(input("Enter a choice to proceed: "))
+            if admin_ch == 1:
+                upt_admin()
+            elif admin_ch == 2:
+                exit()
+                
+        except ValueError:
+            print("Please enter a integer value! ")
+
+def upt_admin():
+    while True:
+        try:
+            admins_to_update = int(input("Enter how many admins to add: "))
+            for _ in range(admins_to_update):
+                admn_usr = input("Enter the admin's username: ")
+                admn_email = input("Enter the admin's email address: ")
+                admn_psd = input("Enter the admin's password: "); hashed_admn_psd = hashlib.sha256(admn_psd.encode()).hexdigest()
+                cur.execute(
+                    f"""INSERT INTO admins(username,email,admin_password_hash)
+                    VALUES
+                    ('{admn_usr}','{admn_email}','{hashed_admn_psd}');"""
+                )
+            break
+        except ValueError:
+            print("Please enter a int value here :<")
+    print("Successfully added admins")
 
 # This ensures that the program can run only when it is directly run and not imported
 if __name__ == "__main__": main()
