@@ -23,10 +23,13 @@ while True:
         if cont:
             exit()
 
-        cred_path = os.path.join(script_dir, "..", "BackEnd", "cred.pkl")
+        cred_path = os.path.join(script_dir, "..", "BackEnd", "cred.pkl") #It returns the dynamic path of the credentials file which is stored in the backend dir
 
+        # This checks if the file is there, if it is there you can either modify it or delete it
         if os.path.isfile(cred_path):
             cont = input("Your credentials are already saved wanna re-use that? Enter to continue or m to modify the file or d to delete the file :) ")
+
+            # For deleting and modifying the credential file
             if cont.lower() == "d":
                 os.remove(cred_path)
                 print("Credentials were sucessfully deleted!")
@@ -35,11 +38,13 @@ while True:
                 with open(cred_path,"wb") as cred_file_w:
                     HOST, USER, PASSWORD = credentials_returner()
                     pickle.dump((HOST, USER, PASSWORD), cred_file_w)
-            
+
+            # This will read the file and updates the variable for login
             else:
                 with open(cred_path, "rb") as cred_file_r:
                     HOST, USER, PASSWORD = pickle.load(cred_file_r)
         else:
+            # This asks your permission to create a new file to store your credentials to a file to use it again and again
             cont = input("Do you wanna store your credentials to a file and use it as cache? Enter to continue or something to don't create it: ")
             if not cont:
                 with open(cred_path, "wb") as cred_file_w:
@@ -109,7 +114,8 @@ def init(mn_ch):
         except FileNotFoundError:
             print("File is missing please restore it via github repo: github.com/AtomTheDark/CTF_Administration")
 
-    elif mn_ch == 2: # To log in as admin and add other admins and challenges
+    # To log in as admin and add other admins and challenges
+    elif mn_ch == 2: 
         while True:
             usr = input("Enter your username: ")
             psd = input("Enter your password: "); hashed_psd = hashlib.sha256(psd.encode()).hexdigest()
@@ -124,9 +130,11 @@ def init(mn_ch):
     elif mn_ch == 3:
         ...
 
-    elif mn_ch == 4: # To exit
+    # To exit
+    elif mn_ch == 4: 
         exit()
 
+# For admin privileges
 def admin_init():
     print("You are now logged in ^_^")
     print("1. To alter admin credentials and add new admins\n2. To exit")
@@ -141,6 +149,7 @@ def admin_init():
         except ValueError:
             print("Please enter a integer value! ")
 
+# To add admins
 def upt_admin():
     while True:
         try:
