@@ -200,10 +200,26 @@ def see_admins():
         )
 
 def admin_rm():
-    cur.execute("DELETE FROM admins;")
-    cur.execute(
-        """INSERT INTO admins(username,email,admin_password_hash)
-VALUES ("admin","admin@ctf.com","8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918");"""
-    )
+    while True:
+        try:
+            print("Do you want to remove other admins or do you want to remove the default login credentials")
+            print("1. To remove other admins\n2. To remove the default login credential")
+            admin_ch = int(input())
+            break
+        except ValueError:
+            print("Enter a integer please !")
+
+    if admin_ch == 1:
+        cur.execute("DELETE FROM admins;")
+        cur.execute("ALTER TABLE admins AUTO_INCREMENT = 1;")
+        cur.execute(
+            """INSERT INTO admins(username,email,admin_password_hash)
+    VALUES ("admin","admin@ctf.com","8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918");"""
+        )
+        print("Deleted admins defaulted to default admin login credentials")
+
+    elif admin_ch == 2:
+        cur.execute("DELETE FROM admins WHERE admin_id_pk = 1;")
+
 # This ensures that the program can run only when it is directly run and not imported
 if __name__ == "__main__": main()
