@@ -18,7 +18,7 @@ def credentials_returner():
 while True:
 
     try: # To connect to the database
-        print("========== Welcome to CTF Administrator ==========")
+        print("============== Welcome to CTF Administrator ==============")
         cont = input("Press Enter to Continue or something to exit ^_^ .")
         if cont:
             exit()
@@ -72,11 +72,11 @@ def main():
 
 # Menu function that return the val
 def menu():
-    print(f"========== Welcome {USER} ==========")
+    print(f"====================== Welcome {USER} ======================")
 
     print("Choose an Option :) ")
 
-    menu_choices = """1. Initialize for the first time\n2. Admin login \n3. Team login\n4. To Exit"""
+    menu_choices = """1. Initialize for the first time\n2. Admin login \n3. Dropping the database\n4. To Exit"""
 
     print(menu_choices)
 
@@ -109,7 +109,7 @@ def init(mn_ch):
                 # To remove the redundant empty lists returned by excecuting the ddl commands otherwise it will raise mysql.connector.errors.DatabaseError
                 while cur.nextset():
                     cur.fetchall()
-                print("Done!")
+                print("Successfully created all the schemas required for the ctf;\n----------------------------------------------------------")
 
         except FileNotFoundError:
             print("File is missing please restore it via github repo: github.com/AtomTheDark/CTF_Administration")
@@ -128,7 +128,19 @@ def init(mn_ch):
                 print(f"Invalid Username or Password\nEntered Username is {usr}, and Password is {psd}")
 
     elif mn_ch == 3:
-        ...
+        cur.execute(
+            """SELECT COUNT(*)
+            FROM INFORMATION_SCHEMA.SCHEMATA
+            WHERE SCHEMA_NAME = 'ctf';"""
+        )
+        (exists,) = cur.fetchone()
+        print(exists)
+        if exists:
+            cur.execute("DROP DATABASE ctf;")
+            print("Successfully dropped the database !_!")
+        else:
+            print("There is no database to delete !_!")
+        exit()
 
     # To exit
     elif mn_ch == 4: 
@@ -137,13 +149,21 @@ def init(mn_ch):
 # For admin privileges
 def admin_init():
     print("You are now logged in ^_^")
-    print("1. To alter admin credentials and add new admins\n2. To exit")
+    print("1. To add new admins\n2. To see all the admins\n3. Delete admins\n4. To exit")
     while True:
         try:
             admin_ch = int(input("Enter a choice to proceed: "))
+
             if admin_ch == 1:
                 upt_admin()
+
             elif admin_ch == 2:
+                see_admins()
+            
+            elif admin_ch == 3:
+                admin_rm()
+
+            elif admin_ch == 4:
                 exit()
                 
         except ValueError:
@@ -166,7 +186,24 @@ def upt_admin():
             break
         except ValueError:
             print("Please enter a int value here :<")
-    print("Successfully added admins")
+    if admins_to_update != 0:
+        print("Successfully added admins <3 ")
+    else:
+        print("No new admins were added...")
 
+def see_admins():
+    cur.execute("SELECT * FROM admins;")
+    admin_data = cur.fetchall()
+    for admin_id, username, email, admin_password_hash, created_at in admin_data: # the variable admin_password_hash was left out intentionally to protect password you can print them if you want
+        print(
+            f"admin id = {admin_id}, username = {username}, email = {email}, created at = {created_at}"
+        )
+
+def admin_rm():
+    cur.execute("DELETE FROM admins;")
+    cur.execute(
+        """INSERT INTO admins(username,email,admin_password_hash)
+VALUES ("admin","admin@ctf.com","8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918");"""
+    )
 # This ensures that the program can run only when it is directly run and not imported
 if __name__ == "__main__": main()
