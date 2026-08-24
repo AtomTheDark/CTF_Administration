@@ -27,7 +27,7 @@ while True:
 
         # This checks if the file is there, if it is there you can either modify it or delete it
         if os.path.isfile(cred_path):
-            cont = input("Your credentials are already saved wanna re-use that? Enter to continue or m to modify the file or d to delete the file :) ")
+            cont = input("Your credentials are already saved wanna re-use that? Press return or something to continue or m to modify the file or d to delete the file :) ")
 
             # For deleting and modifying the credential file
             if cont.lower() == "d":
@@ -121,8 +121,8 @@ def init(mn_ch):
             psd = input("Enter your password: "); hashed_psd = hashlib.sha256(psd.encode()).hexdigest()
             cur.execute("USE ctf;")
             cur.execute(f"SELECT * FROM admins WHERE username = '{usr}' AND admin_password_hash = '{hashed_psd}'")
-            place_holder_for_bool = cur.fetchall()
-            if place_holder_for_bool:
+            exists = cur.fetchone()
+            if exists:
                 admin_init()
             else:
                 print(f"Invalid Username or Password\nEntered Username is {usr}, and Password is {psd}")
@@ -149,8 +149,10 @@ def init(mn_ch):
 # For admin privileges
 def admin_init():
     print("You are now logged in ^_^")
-    print("1. To add new admins\n2. To see all the admins\n3. Delete admins\n4. To exit")
     while True:
+        print("----------------------------------------------------------")
+        print("1. To add new admins\n2. To see all the admins\n3. Delete admins\n4. To create a competition\n5. To exit")
+
         try:
             admin_ch = int(input("Enter a choice to proceed: "))
 
@@ -164,6 +166,9 @@ def admin_init():
                 admin_rm()
 
             elif admin_ch == 4:
+                comp_init()
+
+            elif admin_ch == 5:
                 exit()
                 
         except ValueError:
@@ -191,6 +196,7 @@ def upt_admin():
     else:
         print("No new admins were added...")
 
+# To see admins currently present in the server
 def see_admins():
     cur.execute("SELECT * FROM admins;")
     admin_data = cur.fetchall()
@@ -199,6 +205,7 @@ def see_admins():
             f"admin id = {admin_id}, username = {username}, email = {email}, created at = {created_at}"
         )
 
+# To remove admin accounts
 def admin_rm():
     while True:
         try:
@@ -211,7 +218,7 @@ def admin_rm():
 
     if admin_ch == 1:
         cur.execute("DELETE FROM admins;")
-        cur.execute("ALTER TABLE admins AUTO_INCREMENT = 1;")
+        cur.execute("ALTER TABLE admins AUTO_INCREMENT = 1;") # To reset the AUT0_INCREMENT to 1
         cur.execute(
             """INSERT INTO admins(username,email,admin_password_hash)
     VALUES ("admin","admin@ctf.com","8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918");"""
@@ -219,7 +226,15 @@ def admin_rm():
         print("Deleted admins defaulted to default admin login credentials")
 
     elif admin_ch == 2:
-        cur.execute("DELETE FROM admins WHERE admin_id_pk = 1;")
+        cur.execute("SELECT * FROM admins WHERE admin_id_pk = 1;")
+        exists = cur.fetchone()
+        if exists:
+            cur.execute("DELETE FROM admins WHERE admin_id_pk = 1;")
+        else:
+            print("There is no default admin to delete :( ")
 
+def comp_init():
+    comp_name = input("Enter the competition name: ")
+    comp_description = input("Enter the competition's description: ")
 # This ensures that the program can run only when it is directly run and not imported
 if __name__ == "__main__": main()
