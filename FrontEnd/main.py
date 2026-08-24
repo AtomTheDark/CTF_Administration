@@ -109,6 +109,7 @@ def init(mn_ch):
                 # To remove the redundant empty lists returned by excecuting the ddl commands otherwise it will raise mysql.connector.errors.DatabaseError
                 while cur.nextset():
                     cur.fetchall()
+
                 print("Successfully created all the schemas required for the ctf;\n----------------------------------------------------------")
 
         except FileNotFoundError:
@@ -116,38 +117,47 @@ def init(mn_ch):
 
     # To log in as admin and add other admins and challenges
     elif mn_ch == 2: 
+
         while True:
-            usr = input("Enter your username: ")
-            psd = input("Enter your password: "); hashed_psd = hashlib.sha256(psd.encode()).hexdigest()
-            cur.execute("USE ctf;")
-            cur.execute(f"SELECT * FROM admins WHERE username = '{usr}' AND admin_password_hash = '{hashed_psd}'")
-            exists = cur.fetchone()
+            exists,usr,psd = admin_auth()
+
             if exists:
-                admin_init()
+                admin_init(usr)
             else:
                 print(f"Invalid Username or Password\nEntered Username is {usr}, and Password is {psd}")
 
     elif mn_ch == 3:
+
         cur.execute(
             """SELECT COUNT(*)
             FROM INFORMATION_SCHEMA.SCHEMATA
             WHERE SCHEMA_NAME = 'ctf';"""
         )
-        (exists,) = cur.fetchone()
-        print(exists)
+
+        exists, = cur.fetchone()
+
         if exists:
             cur.execute("DROP DATABASE ctf;")
             print("Successfully dropped the database !_!")
         else:
             print("There is no database to delete !_!")
+
         exit()
 
     # To exit
     elif mn_ch == 4: 
         exit()
 
+def admin_auth():
+    usr = input("Enter your username: ")
+    psd = input("Enter your password: "); hashed_psd = hashlib.sha256(psd.encode()).hexdigest()
+    cur.execute("USE ctf;")
+    cur.execute(f"SELECT * FROM admins WHERE username = '{usr}' AND admin_password_hash = '{hashed_psd}'")
+    exists = cur.fetchone()
+    return exists,usr,psd
+
 # For admin privileges
-def admin_init():
+def admin_init(usr):
     print("You are now logged in ^_^")
     while True:
         print("----------------------------------------------------------")
@@ -166,7 +176,7 @@ def admin_init():
                 admin_rm()
 
             elif admin_ch == 4:
-                comp_init()
+                comp_init(usr)
 
             elif admin_ch == 5:
                 exit()
@@ -177,8 +187,10 @@ def admin_init():
 # To add admins
 def upt_admin():
     while True:
+
         try:
             admins_to_update = int(input("Enter how many admins to add: "))
+
             for _ in range(admins_to_update):
                 admn_usr = input("Enter the admin's username: ")
                 admn_email = input("Enter the admin's email address: ")
@@ -189,8 +201,10 @@ def upt_admin():
                     ('{admn_usr}','{admn_email}','{hashed_admn_psd}');"""
                 )
             break
+
         except ValueError:
             print("Please enter a int value here :<")
+
     if admins_to_update != 0:
         print("Successfully added admins <3 ")
     else:
@@ -200,6 +214,7 @@ def upt_admin():
 def see_admins():
     cur.execute("SELECT * FROM admins;")
     admin_data = cur.fetchall()
+
     for admin_id, username, email, admin_password_hash, created_at in admin_data: # the variable admin_password_hash was left out intentionally to protect password you can print them if you want
         print(
             f"admin id = {admin_id}, username = {username}, email = {email}, created at = {created_at}"
@@ -208,11 +223,13 @@ def see_admins():
 # To remove admin accounts
 def admin_rm():
     while True:
+
         try:
             print("Do you want to remove other admins or do you want to remove the default login credentials")
             print("1. To remove other admins\n2. To remove the default login credential")
             admin_ch = int(input())
             break
+
         except ValueError:
             print("Enter a integer please !")
 
@@ -228,13 +245,26 @@ def admin_rm():
     elif admin_ch == 2:
         cur.execute("SELECT * FROM admins WHERE admin_id_pk = 1;")
         exists = cur.fetchone()
+
         if exists:
             cur.execute("DELETE FROM admins WHERE admin_id_pk = 1;")
         else:
             print("There is no default admin to delete :( ")
 
-def comp_init():
+def comp_init(usr):
+    
     comp_name = input("Enter the competition name: ")
     comp_description = input("Enter the competition's description: ")
+    comp_starting_time = input("Enter competition's starting time: format:(YYYY-MM-DD HH-MM-SS): ")
+    comp_ending_time = input("Enter competition's ending time: format:(YYYY-MM-DD HH-MM-SS): ")
+    comp_status = input("Enter competition's status: ")
+    cur.execute(f"SELECT admin_id_pk FROM admins WHERE username = '{usr}'")
+    admin_id, = cur.fetchone()
+    cur.execute(
+        f"""INSERT INTO competitions(competition_name,competition_description,admin_id_fk,start_time,end_time,competition_status)
+        VALUES
+        ('{comp_name}','{comp_description}',{admin_id},'{comp_starting_time}','{comp_ending_time}','{comp_status}');"""
+    )
+
 # This ensures that the program can run only when it is directly run and not imported
 if __name__ == "__main__": main()
