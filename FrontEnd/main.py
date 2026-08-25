@@ -69,7 +69,6 @@ def main():
         mn_ch = menu()
         init(mn_ch)
 
-
 # Menu function that return the val
 def menu():
     print(f"====================== Welcome {USER} ======================")
@@ -148,6 +147,7 @@ def init(mn_ch):
     elif mn_ch == 4: 
         exit()
 
+# To authenticate admins and passout the username to multiple functions
 def admin_auth():
     usr = input("Enter your username: ")
     psd = input("Enter your password: "); hashed_psd = hashlib.sha256(psd.encode()).hexdigest()
@@ -251,6 +251,7 @@ def admin_rm():
         else:
             print("There is no default admin to delete :( ")
 
+# To create competition
 def comp_init(usr):
     
     comp_name = input("Enter the competition name: ")
