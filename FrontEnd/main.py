@@ -75,7 +75,7 @@ def menu():
 
     print("Choose an Option :) ")
 
-    menu_choices = """1. Initialize for the first time\n2. Admin login \n3. Dropping the database\n4. To Exit"""
+    menu_choices = """1. Initialize for the first time\n2. Admin login \n3. Dropping the database\n4. Team login\n5. To exit"""
 
     print(menu_choices)
 
@@ -84,7 +84,7 @@ def menu():
         try:
             choice = int(input("Enter your choice here! : "))
 
-            if choice in (1, 2, 3, 4):
+            if choice in (1, 2, 3, 4, 5):
                 return choice
             else:
                 print("Enter a integer within the range")
@@ -109,7 +109,7 @@ def init(mn_ch):
                 while cur.nextset():
                     cur.fetchall()
 
-                print("Successfully created all the schemas required for the ctf;\n----------------------------------------------------------")
+                print("----------------------------------------------------------\nSuccessfully created all the schemas required for the ctf;\n----------------------------------------------------------")
 
         except FileNotFoundError:
             print("File is missing please restore it via github repo: github.com/AtomTheDark/CTF_Administration")
@@ -144,8 +144,11 @@ def init(mn_ch):
 
         exit()
 
+    elif mn_ch == 4:
+        team_init()
+
     # To exit
-    elif mn_ch == 4: 
+    elif mn_ch == 5: 
         exit()
 
 # To authenticate admins and passout the username to multiple functions
@@ -163,7 +166,7 @@ def admin_init(usr):
     print("You are now logged in ^_^")
     while True:
         print("----------------------------------------------------------")
-        print("1. To add new admins\n2. To see all the admins\n3. Delete admins\n4. To create a competition\n5. To see all the registered competitions\n6. Ultimate Flag\n7. To exit")
+        print("1. To add new admins\n2. To see all the admins\n3. Delete admins\n4. To create a competition\n5. To see all the registered competitions\n6. Ultimate Flag\n7. To register teams\n8. To exit")
 
         try:
             admin_ch = int(input("Enter a choice to proceed: "))
@@ -188,6 +191,9 @@ def admin_init(usr):
                 print("ULTIMATE FLAG: SV{8RJP+X8}")
 
             elif admin_ch == 7:
+                reg_team()                    
+
+            elif admin_ch == 8:
                 exit()
 
             else:
@@ -295,6 +301,13 @@ def see_comps():
                 \nCompetition admin: {admin_user}\nCompetiton starting time: {start_time}\ncompetition ending time: {end_time}\
                 \nCompetition status: {competition_status}\nCompetition creation time: {created_at}"
         )
+
+
+def reg_team():
+    ...
+
+def team_init():
+    ...
 
 # This ensures that the program can run only when it is directly run and not imported
 if __name__ == "__main__": main()

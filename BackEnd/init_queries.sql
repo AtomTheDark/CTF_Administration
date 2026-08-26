@@ -28,7 +28,8 @@ CREATE TABLE players(
 );
 CREATE TABLE teams(
     team_id_pk INT AUTO_INCREMENT PRIMARY KEY,
-    team_name VARCHAR(75)
+    team_name VARCHAR(75) NOT NULL,
+    team_password_hash VARCHAR(255) NOT NULL
 );
 CREATE TABLE team_members(
     team_id_cpfk INT,
