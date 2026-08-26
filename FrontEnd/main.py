@@ -138,7 +138,7 @@ def init(mn_ch):
         if exists:
             cur.execute("DROP DATABASE ctf;")
             print("Successfully dropped the database !_!")
-            print("Please re-initialise before using the CTF ADMINISTRATOR")
+            print("Please re-initialize before using the CTF ADMINISTRATOR")
         else:
             print("There is no database to delete !_!")
 
