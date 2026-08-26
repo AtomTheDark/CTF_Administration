@@ -138,6 +138,7 @@ def init(mn_ch):
         if exists:
             cur.execute("DROP DATABASE ctf;")
             print("Successfully dropped the database !_!")
+            print("Please re-initialise before using the CTF ADMINISTRATOR")
         else:
             print("There is no database to delete !_!")
 
@@ -155,6 +156,7 @@ def admin_auth():
     cur.execute(f"SELECT * FROM admins WHERE username = '{usr}' AND admin_password_hash = '{hashed_psd}'")
     exists = cur.fetchone()
     return exists,usr,psd
+    # The administrator login intentionally contains an SQL injection vulnerability as part of the CTF's attack surface.
 
 # For admin privileges
 def admin_init(usr):
@@ -206,9 +208,9 @@ def upt_admin():
                 admn_email = input("Enter the admin's email address: ")
                 admn_psd = input("Enter the admin's password: "); hashed_admn_psd = hashlib.sha256(admn_psd.encode()).hexdigest()
                 cur.execute(
-                    f"""INSERT INTO admins(username,email,admin_password_hash)
+                    """INSERT INTO admins(username,email,admin_password_hash)
                     VALUES
-                    ('{admn_usr}','{admn_email}','{hashed_admn_psd}');"""
+                    (%s,%s,%s);""",(admn_usr,admn_email,hashed_admn_psd)
                 )
             break
 
@@ -273,9 +275,10 @@ def comp_init(usr):
     cur.execute(f"SELECT admin_id_pk FROM admins WHERE username = '{usr}'")
     admin_id, = cur.fetchone()
     cur.execute(
-        f"""INSERT INTO competitions(competition_name,competition_description,admin_id_fk,start_time,end_time,competition_status)
+        """INSERT INTO competitions(competition_name,competition_description,admin_id_fk,start_time,end_time,competition_status)
         VALUES
-        ('{comp_name}','{comp_description}',{admin_id},'{comp_starting_time}','{comp_ending_time}','{comp_status}');"""
+        (%s,%s,%s,%s,%s,%s);"""
+        ,(comp_name,comp_description,admin_id,comp_starting_time,comp_ending_time,comp_status)
     )
 
 def see_comps():
