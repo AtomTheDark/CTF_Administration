@@ -161,7 +161,7 @@ def admin_init(usr):
     print("You are now logged in ^_^")
     while True:
         print("----------------------------------------------------------")
-        print("1. To add new admins\n2. To see all the admins\n3. Delete admins\n4. To create a competition\n5. To exit")
+        print("1. To add new admins\n2. To see all the admins\n3. Delete admins\n4. To create a competition\n5. To see all the registered competitions\n6. Ultimate Flag\n7. To exit")
 
         try:
             admin_ch = int(input("Enter a choice to proceed: "))
@@ -179,7 +179,17 @@ def admin_init(usr):
                 comp_init(usr)
 
             elif admin_ch == 5:
+                see_comps()
+
+            elif admin_ch == 6:
+                print("----------------------------------------------------------")
+                print("ULTIMATE FLAG: SV{8RJP+X8}")
+
+            elif admin_ch == 7:
                 exit()
+
+            else:
+                print("Invalid choice")
                 
         except ValueError:
             print("Please enter a integer value! ")
@@ -216,6 +226,7 @@ def see_admins():
     admin_data = cur.fetchall()
 
     for admin_id, username, email, admin_password_hash, created_at in admin_data: # the variable admin_password_hash was left out intentionally to protect password you can print them if you want
+        print("----------------------------------------------------------")
         print(
             f"admin id = {admin_id}, username = {username}, email = {email}, created at = {created_at}"
         )
@@ -256,8 +267,8 @@ def comp_init(usr):
     
     comp_name = input("Enter the competition name: ")
     comp_description = input("Enter the competition's description: ")
-    comp_starting_time = input("Enter competition's starting time: format:(YYYY-MM-DD HH-MM-SS): ")
-    comp_ending_time = input("Enter competition's ending time: format:(YYYY-MM-DD HH-MM-SS): ")
+    comp_starting_time = input("Enter competition's starting time: format:(YYYY-MM-DD HH:MM:SS): ")
+    comp_ending_time = input("Enter competition's ending time: format:(YYYY-MM-DD HH:MM:SS): ")
     comp_status = input("Enter competition's status: ")
     cur.execute(f"SELECT admin_id_pk FROM admins WHERE username = '{usr}'")
     admin_id, = cur.fetchone()
@@ -266,6 +277,21 @@ def comp_init(usr):
         VALUES
         ('{comp_name}','{comp_description}',{admin_id},'{comp_starting_time}','{comp_ending_time}','{comp_status}');"""
     )
+
+def see_comps():
+    cur.execute("SELECT * FROM competitions;")
+    comps = cur.fetchall()
+    for competition_id_pk, competition_name, competition_description, admin_id_fk, start_time, end_time, competition_status, created_at in comps:
+        cur.execute(
+            f"SELECT username FROM admins WHERE admin_id_pk = {admin_id_fk};"
+        )
+        admin_user, = cur.fetchone()
+        print("----------------------------------------------------------")
+        print(
+            f"Competition id: {competition_id_pk}\nCompetition name: {competition_name}\nCompetition description: {competition_description}\
+                \nCompetition admin: {admin_user}\nCompetiton starting time: {start_time}\ncompetition ending time: {end_time}\
+                \nCompetition status: {competition_status}\nCompetition creation time: {created_at}"
+        )
 
 # This ensures that the program can run only when it is directly run and not imported
 if __name__ == "__main__": main()
