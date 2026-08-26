@@ -72,11 +72,9 @@ def main():
 # Menu function that return the val
 def menu():
     print(f"====================== Welcome {USER} ======================")
-
     print("Choose an Option :) ")
 
-    menu_choices = """1. Initialize for the first time\n2. Admin login \n3. Dropping the database\n4. Team login\n5. To exit"""
-
+    menu_choices = """1. Initialize for the first time\n2. Admin login \n3. Dropping the database\n4. Team login\n5. To see all the teams registered\n6. To exit"""
     print(menu_choices)
 
     while True:
@@ -84,7 +82,7 @@ def menu():
         try:
             choice = int(input("Enter your choice here! : "))
 
-            if choice in (1, 2, 3, 4, 5):
+            if choice in (1, 2, 3, 4, 5, 6):
                 return choice
             else:
                 print("Enter a integer within the range")
@@ -125,14 +123,17 @@ def init(mn_ch):
             else:
                 print(f"Invalid Username or Password\nEntered Username is {usr}, and Password is {psd}")
 
+    # To check whether there is a database named ctf and if so delete it else it will print a message stating that there is no database to delete
     elif mn_ch == 3:
 
+        # Apparently this database contains all the meta-data, which is pretty wild!!!!
         cur.execute(
             """SELECT COUNT(*)
             FROM INFORMATION_SCHEMA.SCHEMATA
             WHERE SCHEMA_NAME = 'ctf';"""
         )
 
+        # It receives the value as well as unpacks it like if i just use exists the result will be: (data,) using comma after it unpacks it and just gives us the data
         exists, = cur.fetchone()
 
         if exists:
@@ -144,26 +145,38 @@ def init(mn_ch):
 
         exit()
 
+    # To log in as a team
     elif mn_ch == 4:
+
         team_init()
 
+    # To see potential rivals lol
+    elif mn_ch == 5:
+
+        cur.execute("USE ctf;")
+        disp_teams()
+
     # To exit
-    elif mn_ch == 5: 
+    elif mn_ch == 6: 
         exit()
 
 # To authenticate admins and passout the username to multiple functions
 def admin_auth():
+
     usr = input("Enter your username: ")
     psd = input("Enter your password: "); hashed_psd = hashlib.sha256(psd.encode()).hexdigest()
     cur.execute("USE ctf;")
     cur.execute(f"SELECT * FROM admins WHERE username = '{usr}' AND admin_password_hash = '{hashed_psd}'")
     exists = cur.fetchone()
+
     return exists,usr,psd
     # The administrator login intentionally contains an SQL injection vulnerability as part of the CTF's attack surface.
 
 # For admin privileges
 def admin_init(usr):
+
     print("You are now logged in ^_^")
+
     while True:
         print("----------------------------------------------------------")
         print("1. To add new admins\n2. To see all the admins\n3. Delete admins\n4. To create a competition\n5. To see all the registered competitions\n6. Ultimate Flag\n7. To register teams\n8. To exit")
@@ -172,30 +185,32 @@ def admin_init(usr):
             admin_ch = int(input("Enter a choice to proceed: "))
 
             if admin_ch == 1:
-                upt_admin()
+                upt_admin() # To add admins
 
             elif admin_ch == 2:
-                see_admins()
+                see_admins() # To see admins
             
             elif admin_ch == 3:
-                admin_rm()
+                admin_rm() # To remove admins
 
             elif admin_ch == 4:
-                comp_init(usr)
+                comp_init(usr) # To initiate a competition
 
             elif admin_ch == 5:
-                see_comps()
+                see_comps() # To see all the competitions
 
             elif admin_ch == 6:
+                # Its just an easter egg for my program players can find using sqli and if players entered it they might get an bonus, i mean who knows ¯\_(ツ)_/¯
                 print("----------------------------------------------------------")
                 print("ULTIMATE FLAG: SV{8RJP+X8}")
 
             elif admin_ch == 7:
-                reg_team()                    
+                reg_team() # To register teams                    
 
             elif admin_ch == 8:
                 exit()
 
+            # Catches invalid choice
             else:
                 print("Invalid choice")
                 
@@ -209,15 +224,18 @@ def upt_admin():
         try:
             admins_to_update = int(input("Enter how many admins to add: "))
 
+            # Used underscore here as a variable/identifier cuz im a programmer, lol
             for _ in range(admins_to_update):
                 admn_usr = input("Enter the admin's username: ")
                 admn_email = input("Enter the admin's email address: ")
                 admn_psd = input("Enter the admin's password: "); hashed_admn_psd = hashlib.sha256(admn_psd.encode()).hexdigest()
+
                 cur.execute(
                     """INSERT INTO admins(username,email,admin_password_hash)
                     VALUES
                     (%s,%s,%s);""",(admn_usr,admn_email,hashed_admn_psd)
                 )
+
             break
 
         except ValueError:
@@ -243,6 +261,7 @@ def see_admins():
 def admin_rm():
     while True:
 
+        # Used a menu kind of thing here to remove the default login cred and to remove all other admins
         try:
             print("Do you want to remove other admins or do you want to remove the default login credentials")
             print("1. To remove other admins\n2. To remove the default login credential")
@@ -253,15 +272,21 @@ def admin_rm():
             print("Enter a integer please !")
 
     if admin_ch == 1:
+
         cur.execute("DELETE FROM admins;")
         cur.execute("ALTER TABLE admins AUTO_INCREMENT = 1;") # To reset the AUT0_INCREMENT to 1
+
+        # To reinsert the default admin credential
         cur.execute(
             """INSERT INTO admins(username,email,admin_password_hash)
     VALUES ("admin","admin@ctf.com","8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918");"""
         )
+
         print("Deleted admins defaulted to default admin login credentials")
 
+    # I have included this option to prevent players from knowing that there is a admin cred if the host want to remove it they can here
     elif admin_ch == 2:
+
         cur.execute("SELECT * FROM admins WHERE admin_id_pk = 1;")
         exists = cur.fetchone()
 
@@ -278,8 +303,12 @@ def comp_init(usr):
     comp_starting_time = input("Enter competition's starting time: format:(YYYY-MM-DD HH:MM:SS): ")
     comp_ending_time = input("Enter competition's ending time: format:(YYYY-MM-DD HH:MM:SS): ")
     comp_status = input("Enter competition's status: ")
+
+    # To get the admin id of the logged in host
     cur.execute(f"SELECT admin_id_pk FROM admins WHERE username = '{usr}'")
+
     admin_id, = cur.fetchone()
+
     cur.execute(
         """INSERT INTO competitions(competition_name,competition_description,admin_id_fk,start_time,end_time,competition_status)
         VALUES
@@ -287,14 +316,20 @@ def comp_init(usr):
         ,(comp_name,comp_description,admin_id,comp_starting_time,comp_ending_time,comp_status)
     )
 
+# To see all the competitions that are going to happen or happened in the past which was conducted via this program
 def see_comps():
+
     cur.execute("SELECT * FROM competitions;")
     comps = cur.fetchall()
+
     for competition_id_pk, competition_name, competition_description, admin_id_fk, start_time, end_time, competition_status, created_at in comps:
+
+        #To get the username of the admin to print
         cur.execute(
             f"SELECT username FROM admins WHERE admin_id_pk = {admin_id_fk};"
         )
         admin_user, = cur.fetchone()
+
         print("----------------------------------------------------------")
         print(
             f"Competition id: {competition_id_pk}\nCompetition name: {competition_name}\nCompetition description: {competition_description}\
@@ -302,10 +337,41 @@ def see_comps():
                 \nCompetition status: {competition_status}\nCompetition creation time: {created_at}"
         )
 
-
+# To register teams with their password so that players can login according to their teams
 def reg_team():
-    ...
 
+    while True:
+
+        try:
+            team_cnt = int(input("Enter how many teams you want to register: "))
+
+            # Same as there cuz im a programmer
+            for _ in range(team_cnt):
+
+                team_name = input("Enter the team's name: ")
+                team_password = input("Enter the team's password: "); team_password_hashed = hashlib.sha256(team_password.encode()).hexdigest()
+
+                cur.execute(
+                    """INSERT INTO teams(team_name, team_password_hash)
+                    VALUES
+                    (%s,%s);"""
+                    ,(team_name,team_password_hashed)
+                )
+
+            break
+        
+        except ValueError:
+            print("Please enter an integer value")
+
+# To display all the teams which are registed in the admin menu
+def disp_teams():
+    cur.execute("SELECT team_name FROM teams;")
+    teams = cur.fetchall()
+    for team, in teams:
+        print("----------------------------------------------------------")
+        print(team)
+
+# To login via team credentials
 def team_init():
     ...
 
