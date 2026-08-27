@@ -187,6 +187,7 @@ def admin_init(usr):
 
     while True:
         print("----------------------------------------------------------")
+        print(f"============== Welcome {usr} ==============")
         print("1. To add new admins\n2. To see all the admins\n3. Delete admins\n4. To create a competition\n5. To see all the registered competitions\n6. Ultimate Flag\n7. To register teams\n8. To exit")
 
         try:
@@ -236,8 +237,8 @@ def upt_admin():
             # Used underscore here as a variable/identifier cuz im a programmer, lol
             for _ in range(admins_to_update):
                 admn_usr = input("Enter the admin's username: ")
-                admn_email = input("Enter the admin's email address: ")
-                admn_psd = input("Enter the admin's password: "); hashed_admn_psd = hashlib.sha256(admn_psd.encode()).hexdigest()
+                admn_email = input(f"Enter the {admn_usr}'s email address: ")
+                admn_psd = input(f"Enter the {admn_usr}'s password: "); hashed_admn_psd = hashlib.sha256(admn_psd.encode()).hexdigest()
 
                 cur.execute(
                     """INSERT INTO admins(username,email,admin_password_hash)
@@ -383,23 +384,38 @@ def disp_teams():
 def team_auth():
 
     while True:
-        team_usr = input("Enter team's name: ")
+        team_name = input("Enter team's name: ")
         team_psd = input("Enter team's password: "); team_psd_hashed = hashlib.sha256(team_psd.encode()).hexdigest()
 
         cur.execute("USE ctf;")
-        cur.execute("SELECT * FROM teams WHERE team_name = %s AND team_password_hash = %s",(team_usr,team_psd_hashed))
+        cur.execute("SELECT * FROM teams WHERE team_name = %s AND team_password_hash = %s",(team_name,team_psd_hashed))
         exists = cur.fetchone()
 
         if exists:
-            team_init()
+            team_init(team_name)
             break
         else:
-            print(f"Invalid Team name or Password\nEntered Username is {team_usr}, and Password is {team_psd}")
+            print(f"Invalid Team name or Password\nEntered Username is {team_name}, and Password is {team_psd}")
 
 
 # To login via team credentials
-def team_init():
-    print("logged in...")
+def team_init(team_name):
+    print("----------------------------------------------------------")
+    print(f"============== Welcome {team_name} ==============")
+    print("1. To register players")
+
+    while True:
+        try:
+            tm_ch = int(input("Enter your choice: "))
+
+            if tm_ch == 1:
+                player_name = input("Enter player's name: ")
+                player_username = input(f"Enter {player_name}'s username: ")
+                player_password = input(f"Enter {player_name}'s password: ")
+
+        except ValueError:
+            print("Please enter a numerical value ╰（‵□′）╯")
+
 
 # This ensures that the program can run only when it is directly run and not imported
 if __name__ == "__main__": main()
