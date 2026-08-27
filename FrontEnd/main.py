@@ -137,9 +137,17 @@ def init(mn_ch):
         exists, = cur.fetchone()
 
         if exists:
-            cur.execute("DROP DATABASE ctf;")
-            print("Successfully dropped the database !_!")
-            print("Please re-initialize before using the CTF ADMINISTRATOR")
+            del_ch = "N"
+            del_ch = input("Do you want to delete the database?\nThis is a one way process once deleted the data can't be recovered: (y/N): ")
+
+            # This prevents from accidental dropping of the database
+            if del_ch.lower() == "y":
+                cur.execute("DROP DATABASE ctf;")
+                print("Successfully dropped the database !_!")
+                print("Please re-initialize before using the CTF ADMINISTRATOR")
+            else:
+                print("Process aborted")
+
         else:
             print("There is no database to delete !_!")
 
@@ -148,7 +156,7 @@ def init(mn_ch):
     # To log in as a team
     elif mn_ch == 4:
 
-        team_init()
+        team_auth()
 
     # To see potential rivals lol
     elif mn_ch == 5:
@@ -201,6 +209,7 @@ def admin_init(usr):
 
             elif admin_ch == 6:
                 # Its just an easter egg for my program players can find using sqli and if players entered it they might get an bonus, i mean who knows ¯\_(ツ)_/¯
+                # this flag here represents google plus code for Santhanam Vidhyalaya
                 print("----------------------------------------------------------")
                 print("ULTIMATE FLAG: SV{8RJP+X8}")
 
@@ -371,9 +380,26 @@ def disp_teams():
         print("----------------------------------------------------------")
         print(team)
 
+def team_auth():
+
+    while True:
+        team_usr = input("Enter team's name: ")
+        team_psd = input("Enter team's password: "); team_psd_hashed = hashlib.sha256(team_psd.encode()).hexdigest()
+
+        cur.execute("USE ctf;")
+        cur.execute("SELECT * FROM teams WHERE team_name = %s AND team_password_hash = %s",(team_usr,team_psd_hashed))
+        exists = cur.fetchone()
+
+        if exists:
+            team_init()
+            break
+        else:
+            print(f"Invalid Team name or Password\nEntered Username is {team_usr}, and Password is {team_psd}")
+
+
 # To login via team credentials
 def team_init():
-    ...
+    print("logged in...")
 
 # This ensures that the program can run only when it is directly run and not imported
 if __name__ == "__main__": main()
