@@ -409,12 +409,38 @@ def team_init(team_name):
             tm_ch = int(input("Enter your choice: "))
 
             if tm_ch == 1:
-                player_name = input("Enter player's name: ")
-                player_username = input(f"Enter {player_name}'s username: ")
-                player_password = input(f"Enter {player_name}'s password: ")
+                upt_players()
 
         except ValueError:
             print("Please enter a numerical value ╰（‵□′）╯")
+
+def upt_players():
+    while True:
+
+        try:
+            players_to_update = int(input("Enter how many players to add: "))
+
+            # Same as upt_admin()
+            for _ in range(players_to_update):
+                player_name = input("Enter the player's name: ")
+                player_username = input(f"Enter the {player_name}'s username: ")
+                player_passwd = input(f"Enter the {player_name}'s password: "); hashed_player_passwd = hashlib.sha256(player_passwd.encode()).hexdigest()
+
+                cur.execute(
+                    """INSERT INTO players(player_name,player_username,player_passwd_hash)
+                    VALUES
+                    (%s,%s,%s)""",(player_name,player_username,hashed_player_passwd)
+                )
+
+            break
+
+        except ValueError:
+            print("Not a valid choice !!!")
+
+    if players_to_update != 0:
+        print("Successfully added all the players :)")
+    else:
+        print("No new players were added !!!")
 
 
 # This ensures that the program can run only when it is directly run and not imported
