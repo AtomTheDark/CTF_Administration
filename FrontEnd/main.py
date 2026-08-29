@@ -246,6 +246,7 @@ def upt_admin():
                     (%s,%s,%s);""",(admn_usr,admn_email,hashed_admn_psd)
                 )
 
+            # break is implemented here to break the while True loop
             break
 
         except ValueError:
@@ -432,6 +433,7 @@ def upt_players():
                     (%s,%s,%s)""",(player_name,player_username,hashed_player_passwd)
                 )
 
+            # break is implemented here to break the while True loop
             break
 
         except ValueError:

@@ -16,7 +16,24 @@ if you want that database to exists in a different name please execute these bel
 mysqldump -u root -p ctf > ctf.sql  
 ```
 
-### To move the data back into another database
+### Project Retrospective
+***Modules Imported***
+```python
+mysql.connector
+os
+pickle
+hashlib
+```
+****Walkthrough****
+I have made a global variable called script_dir to get the absolute path of main.py
+
+later i have used that absolute path to make a dynamic path for my backend sql file
+
+I have used a function named credentials_returner that returns the user input values, this is done to minimise code redundance
+
+
+
+#### To move the data back into another database
 
 ```cmd
 mysql -u root -p ctf_new < ctf.sql
