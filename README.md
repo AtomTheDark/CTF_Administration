@@ -60,6 +60,10 @@ I have added a ULTIMATE FLAG to make this program not just a ctf administrator b
 
 Here admins can also register teams and teams registered here reflect on the menu page and if no teams are registered it will print an respective message
 
+All the stored passwords are hashed in sha256 using the module hashlib
+
+All the executing commands are parameterized except 3 commands where the player will find the sqli vulnerability and try it on the admin login page to find the ultimate flag it is a simple idea but when the default credentials are removed its going to be little bit of a nightmare to stumble upon the ultimate flag
+
 #### To move the data back into another database
 
 ```cmd
