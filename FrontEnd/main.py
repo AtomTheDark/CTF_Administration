@@ -378,9 +378,14 @@ def reg_team():
 def disp_teams():
     cur.execute("SELECT team_name FROM teams;")
     teams = cur.fetchall()
-    for team, in teams:
+
+    if teams:
+        for team, in teams:
+            print("----------------------------------------------------------")
+            print(team)
+    else:
         print("----------------------------------------------------------")
-        print(team)
+        print("No teams are registered")
 
 def team_auth():
 
