@@ -211,8 +211,7 @@ def admin_init(usr):
             elif admin_ch == 6:
                 # Its just an easter egg for my program players can find using sqli and if players entered it they might get an bonus, i mean who knows ¯\_(ツ)_/¯
                 # this flag here represents google plus code for Santhanam Vidhyalaya
-                print("----------------------------------------------------------")
-                print("ULTIMATE FLAG: SV{8RJP+X8}")
+                mod_ult_flag()
 
             elif admin_ch == 7:
                 reg_team() # To register teams                    
@@ -262,7 +261,7 @@ def see_admins():
     cur.execute("SELECT * FROM admins;")
     admin_data = cur.fetchall()
 
-    for admin_id, username, email, admin_password_hash, created_at in admin_data: # the variable admin_password_hash was left out intentionally to protect password you can print them if you want
+    for admin_id, username, email, _admin_password_hash, created_at in admin_data: # the variable admin_password_hash was left out intentionally to protect password you can print them if you want
         print("----------------------------------------------------------")
         print(
             f"admin id = {admin_id}, username = {username}, email = {email}, created at = {created_at}"
@@ -301,8 +300,10 @@ def admin_rm():
         cur.execute("SELECT * FROM admins WHERE admin_id_pk = 1;")
         exists = cur.fetchone()
 
+        print("----------------------------------------------------------")
         if exists:
             cur.execute("DELETE FROM admins WHERE admin_id_pk = 1;")
+            print("Successfully deleted the default login credential")
         else:
             print("There is no default admin to delete :( ")
 
@@ -330,16 +331,14 @@ def comp_init(usr):
 # To see all the competitions that are going to happen or happened in the past which was conducted via this program
 def see_comps():
 
-    cur.execute("SELECT * FROM competitions;")
+    cur.execute(
+        """SELECT C.*, A.username
+        FROM competitions C, admins A
+        WHERE C.admin_id_fk = A.admin_id_pk;"""
+    )
     comps = cur.fetchall()
 
-    for competition_id_pk, competition_name, competition_description, admin_id_fk, start_time, end_time, competition_status, created_at in comps:
-
-        #To get the username of the admin to print
-        cur.execute(
-            f"SELECT username FROM admins WHERE admin_id_pk = {admin_id_fk};"
-        )
-        admin_user, = cur.fetchone()
+    for competition_id_pk, competition_name, competition_description, _admin_id_fk, start_time, end_time, competition_status, created_at, admin_user in comps: # _admin_id_fk is left out intentionally
 
         print("----------------------------------------------------------")
         print(
@@ -386,6 +385,15 @@ def disp_teams():
     else:
         print("----------------------------------------------------------")
         print("No teams are registered")
+
+def mod_ult_flag():
+    print("----------------------------------------------------------")
+    print("Here you can add many ultimate flags\nThe default one is: SV{8RJP+X8}")
+    ch = "n"
+    ch = input("Do you want to edit the ultimate flag? (Y/n): ")
+    if ch in "Yy":
+        ult_flag = input("Enter the Ultimate flag: ")
+        cur.execute("INSERT INTO ultimate_flags VALUES (%s)",(ult_flag,))
 
 def team_auth():
 

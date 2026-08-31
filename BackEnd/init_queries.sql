@@ -81,5 +81,9 @@ CREATE TABLE submissions(
     FOREIGN KEY(team_id_fk) REFERENCES teams(team_id_pk),
     FOREIGN KEY(challenge_id_fk) REFERENCES challenges(challenge_id_pk)
 );
+CREATE TABLE ultimate_flags(
+    flag VARCHAR(255)
+);
 INSERT INTO admins(username,email,admin_password_hash)
 VALUES ("admin","admin@ctf.com","8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918");
+INSERT INTO ultimate_flags VALUES ("SV{8RJP+X8}");

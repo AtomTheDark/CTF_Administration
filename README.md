@@ -16,7 +16,13 @@ if you want that database to exists in a different name please execute these bel
 mysqldump -u root -p ctf > ctf.sql  
 ```
 
-### Project Retrospective
+## To move the data back into another database
+
+```cmd
+mysql -u root -p ctf_new < ctf.sql
+```
+
+## Project Retrospective
 **Modules Imported**
 ```python
 mysql.connector
@@ -63,12 +69,6 @@ Here admins can also register teams and teams registered here reflect on the men
 All the stored passwords are hashed in sha256 using the module hashlib
 
 All the executing commands are parameterized except 3 commands where the player will find the sqli vulnerability and try it on the admin login page to find the ultimate flag it is a simple idea but when the default credentials are removed its going to be little bit of a nightmare to stumble upon the ultimate flag
-
-#### To move the data back into another database
-
-```cmd
-mysql -u root -p ctf_new < ctf.sql
-```
 
 #### Credentials
 
